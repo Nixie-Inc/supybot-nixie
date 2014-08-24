@@ -42,6 +42,7 @@ import tinyurl as t
 
 import feedparser
 import threading
+import random 
 
 
 
@@ -53,6 +54,7 @@ class Nixie(callbacks.Plugin):
 
 
     def __init__(self, irc):
+        self.rnd = random.Random()
         self.__parent = super(Nixie, self)
         self.__parent.__init__(irc)
         self.nixie_rss = "http://feeds.feedburner.com/nixiepixel"
@@ -95,6 +97,19 @@ class Nixie(callbacks.Plugin):
         irc.reply("Github 'cause why note: https://github.com/Nixie-Inc/FOSSCommunity/wiki", private=True)
     nixiedocs = wrap(nixiedocs)
   
+    #TODO: make this less.. sucky 
+    def nixierandom(self, irc, msg, args, channel):
+        """
+          select a random user from current room
+        """
+        chanObj = irc.state.channels[channel]
+        users = chanObj.users
+        arrayUser = []
+        for user in users:
+            arrayUser.append(user)
+        ndx = self.rnd.randint(0, len(users))
+        irc.reply(arrayUser[ndx])
+    nixierandom  = wrap(nixierandom, ['channel'] )
 
     def nixiefeed(self, irc, msg, args):
         """
