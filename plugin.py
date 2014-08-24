@@ -54,11 +54,12 @@ class Nixie(callbacks.Plugin):
 
 
     def __init__(self, irc):
-        self.rnd = random.Random()
+        self.rnd = random.SystemRandom() 
         self.__parent = super(Nixie, self)
         self.__parent.__init__(irc)
         self.nixie_rss = "http://feeds.feedburner.com/nixiepixel"
         self.__create_nixiedocs()
+        self.excludes = set(['nixie', 'ChanServ', 'llama-bot', 'Yami-no-Ryama'])
 
     def __create_nixiedocs(self):
         self.nixiedocuments = {}
@@ -97,18 +98,18 @@ class Nixie(callbacks.Plugin):
         irc.reply("Github 'cause why note: https://github.com/Nixie-Inc/FOSSCommunity/wiki", private=True)
     nixiedocs = wrap(nixiedocs)
   
-    #TODO: make this less.. sucky 
     def nixierandom(self, irc, msg, args, channel):
         """
           select a random user from current room
         """
         chanObj = irc.state.channels[channel]
         users = chanObj.users
-        arrayUser = []
+        array_users = []
         for user in users:
-            arrayUser.append(user)
-        ndx = self.rnd.randint(0, len(users))
-        irc.reply(arrayUser[ndx])
+            if user in self.excludes:
+                continue
+            array_users.append(user)
+        irc.reply(self.rnd.choice(array_users))
     nixierandom  = wrap(nixierandom, ['channel'] )
 
     def nixiefeed(self, irc, msg, args):
