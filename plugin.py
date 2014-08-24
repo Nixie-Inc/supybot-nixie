@@ -49,6 +49,8 @@ class Nixie(callbacks.Plugin):
     """Add the help for "@plugin help Nixie" here
     This should describe *how* to use this plugin."""
     nixiedocuments = None
+    cached_nixiedocs = None
+
 
     def __init__(self, irc):
         self.__parent = super(Nixie, self)
@@ -62,7 +64,13 @@ class Nixie(callbacks.Plugin):
         self.nixiedocuments['Community Plan'] = "https://docs.google.com/document/d/1TBQwaRhjDgFLi1xDmQfgY0OMyxhhUDLeKXZzv_NH_88/edit?usp=sharing"
         self.nixiedocuments['Linux Myths'] = "https://docs.google.com/document/d/1EF7D6iRLkVvK0NwRzp_KOOKABfqrJf0u023KBPRshts/edit?usp=sharing"
         self.nixiedocuments['Civic Involvement Brain Dump'] = "https://docs.google.com/document/d/1yGD1LK0fTnOLtor5xkIhZtTW02hqrgBkpMQqRU9OcF8/edit?usp=sharing"
-        self.nixiedocuments['github'] = "https://github.com/Nixie-Inc/FOSSCommunity/wiki"
+        if self.cached_nixiedocs is None:
+            self.cached_nixiedocs = {} 
+            for key in self.nixiedocuments:
+                self.cached_nixiedocs[key] = self._tinyurl(self.nixiedocuments[key]) 
+ 
+
+
     def _tinyurl(self, url):
         return t.create_one(url)
 
@@ -82,9 +90,8 @@ class Nixie(callbacks.Plugin):
     def nixiedocs(self, irc, msg, args):
         """
           Returns the set of collaborative documents created by the community.
-        """
-        for key in self.nixiedocuments:
-            irc.reply(key + ": " + self._tinyurl(self.nixiedocuments[key]), private=True)
+        """          
+        [ irc.reply(key + ": " + self.cached_nixiedocs[key], private=True) for key in self.cached_nixiedocs]
         irc.reply("Github 'cause why note: https://github.com/Nixie-Inc/FOSSCommunity/wiki", private=True)
     nixiedocs = wrap(nixiedocs)
   
@@ -96,15 +103,8 @@ class Nixie(callbacks.Plugin):
         """
         print args
         feed = feedparser.parse(self.nixie_rss)
-        items = feed['entries']
-        count =0
-        for item in items:
-            if count >= 5:
-                break;
-            line = item['published'] + ":  " + item['title'] + " ::: " + item['id']
-            irc.reply(line, private=True)
-            count += 1
-
+        items = feed['entries'][:5]
+        [ irc.reply(item['published'] + ":  " + item['title'] + " ::: " + item['id'], private=True) for item in items]  
     nixiefeed  = wrap(nixiefeed)
 
 Class = Nixie
