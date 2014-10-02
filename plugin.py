@@ -82,7 +82,7 @@ class Nixie(callbacks.Plugin):
           Returns the nixiecontact information
         """
 
-        irc.reply("Twitter:  twitter.com/nixiepixel", private=True)
+        irc.reply("Twitter:  http://twitter.com/nixiepixel", private=True)
         irc.reply("Facebook: http://fb.me/nixiepixel", private=True)
         irc.reply("Google+: http://google.me/+NixiePixel", private=True)
         irc.reply("Patreon: http://patreon.com/nixiepixel", private=True)
@@ -111,6 +111,15 @@ class Nixie(callbacks.Plugin):
             array_users.append(user)
         irc.reply(self.rnd.choice(array_users))
     nixierandom  = wrap(nixierandom, ['channel'] )
+
+    def llamaride(self, irc, msg, args, channel):
+        """
+          Go for a Llama ride
+        """
+        irc.reply("yeeeeeeeeeeehhhhhaaaa, yippee ki yay")
+    llamaride  = wrap(llamaride, ['channel'] )
+
+
 
     def nixiefeed(self, irc, msg, args):
         """
