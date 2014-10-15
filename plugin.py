@@ -36,8 +36,11 @@ import supybot.callbacks as callbacks
 import supybot.httpserver as httpserver
 import supybot.ircmsgs as ircmsgs
 import supybot.world as world
+import supybot.ircdb as ircdb
 import re
 import tinyurl as t
+import subprocess as proc
+from pyfiglet import figlet_format
 
 
 import feedparser
@@ -76,6 +79,23 @@ class Nixie(callbacks.Plugin):
 
     def _tinyurl(self, url):
         return t.create_one(url)
+
+    def banner(self, irc, msg, args, text):
+        """
+          Returns the text passed in as a 'banner' to annoy everyone with.
+        """
+        if  not  ircdb.checkCapability(msg.prefix, 'admin'):
+            self.log.warning("Permission Denied!")
+            return
+        resp = figlet_format(text, font='banner')
+        lines = resp.split("\n")
+        for line in lines:
+            if len(line) == 0:
+                continue
+            irc.reply(line)
+
+    banner = wrap(banner, ['text'])
+
 
     def nixiecontact(self, irc, msg, args):
         """
