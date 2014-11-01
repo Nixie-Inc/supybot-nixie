@@ -107,6 +107,7 @@ class Nixie(callbacks.Plugin):
         irc.reply("Google+: http://google.me/+NixiePixel", private=True)
         irc.reply("Patreon: http://patreon.com/nixiepixel", private=True)
         irc.reply("Steam group: http://steamcommunity.com/groups/nixiepixel", private=True)
+        irc.reply("MySpace: https://myspace.com/nixie_pixel", private=True)
     nixiecontact = wrap(nixiecontact)
 
 
