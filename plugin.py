@@ -57,25 +57,11 @@ class Nixie(callbacks.Plugin):
 
 
     def __init__(self, irc):
-        self.rnd = random.SystemRandom() 
         self.__parent = super(Nixie, self)
         self.__parent.__init__(irc)
+        self.rnd = random.SystemRandom() 
         self.nixie_rss = "http://feeds.feedburner.com/nixiepixel"
-        self.__create_nixiedocs()
         self.excludes = set(['nixie', 'ChanServ', 'llama-bot', 'Yami-no-Ryama'])
-
-    def __create_nixiedocs(self):
-        self.nixiedocuments = {}
-        self.nixiedocuments['BrainDump (unedited)'] = "https://docs.google.com/document/d/1Z6sOjoxhYXBoXydnI3ba8VWQys3T45Rd836TzNq6yZw/edit?usp=sharing"
-        self.nixiedocuments['Community Plan'] = "https://docs.google.com/document/d/1TBQwaRhjDgFLi1xDmQfgY0OMyxhhUDLeKXZzv_NH_88/edit?usp=sharing"
-        self.nixiedocuments['Linux Myths'] = "https://docs.google.com/document/d/1EF7D6iRLkVvK0NwRzp_KOOKABfqrJf0u023KBPRshts/edit?usp=sharing"
-        self.nixiedocuments['Civic Involvement Brain Dump'] = "https://docs.google.com/document/d/1yGD1LK0fTnOLtor5xkIhZtTW02hqrgBkpMQqRU9OcF8/edit?usp=sharing"
-        if self.cached_nixiedocs is None:
-            self.cached_nixiedocs = {} 
-            for key in self.nixiedocuments:
-                self.cached_nixiedocs[key] = self._tinyurl(self.nixiedocuments[key]) 
- 
-
 
     def _tinyurl(self, url):
         return t.create_one(url)
@@ -102,12 +88,8 @@ class Nixie(callbacks.Plugin):
           Returns the nixiecontact information
         """
 
-        irc.reply("Twitter:  http://twitter.com/nixiepixel", private=True)
-        irc.reply("Facebook: http://fb.me/nixiepixel", private=True)
-        irc.reply("Google+: http://google.me/+NixiePixel", private=True)
-        irc.reply("Patreon: http://patreon.com/nixiepixel", private=True)
-        irc.reply("Steam group: http://steamcommunity.com/groups/nixiepixel", private=True)
-        irc.reply("MySpace: https://myspace.com/nixie_pixel", private=True)
+        irc.reply("Contact Info Page: http://osalt.github.io/pages/contact.html", private=True)
+
     nixiecontact = wrap(nixiecontact)
 
 
@@ -115,9 +97,37 @@ class Nixie(callbacks.Plugin):
         """
           Returns the set of collaborative documents created by the community.
         """          
-        [ irc.reply(key + ": " + self.cached_nixiedocs[key], private=True) for key in self.cached_nixiedocs]
-        irc.reply("Github 'cause why note: https://github.com/Nixie-Inc/FOSSCommunity/wiki", private=True)
+        irc.reply("http://osalt.github.io/pages/community-planning.html", private=True)
     nixiedocs = wrap(nixiedocs)
+
+    def _sendMsg(self, irc, msg):
+        irc.queueMsg(msg)
+        irc.noReply()
+
+    #def spin(self, irc, msg, args, channel):
+    #    """
+    #      select a random user from current room
+    #    """
+    #    if  not  ircdb.checkCapability(msg.prefix, 'admin') and name.lower() =="nixie":
+    #        irc.reply("Permission Denied!")
+    #        return
+    #    chanObj = irc.state.channels[channel]
+    #    users = chanObj.users
+    #    array_users = []
+    #    for user in users:
+    #        if user in self.excludes:
+    #            continue
+    #        array_users.append(user)
+    #    #irc.reply("kicking:" + self.rnd.choice(array_users))
+    #    #sheep = self.rnd.choice(array_users)
+    #    sheep = 'csgeek'
+    #    irc.reply("trying to kick:" + sheep)
+    #    print (dir(irc))
+    #    ircmsgs.kick(channel, sheep)
+    #    self._sendMsg(irc, ircmsgs.kick(channel, sheep, "bye bye"))
+    #spin  = wrap(spin, ['channel'] )
+
+
   
     def nixierandom(self, irc, msg, args, channel):
         """
@@ -133,6 +143,15 @@ class Nixie(callbacks.Plugin):
         irc.reply(self.rnd.choice(array_users))
     nixierandom  = wrap(nixierandom, ['channel'] )
 
+
+    def ces(self, irc, msg, args, channel):
+        """
+          Form to submit questions / comments about CES coverage.
+        """
+        irc.reply("Submit CES related questions here: http://osalt.github.io/pages/forms.html")
+    ces = wrap(ces, ['channel'] )
+
+
     def llamaride(self, irc, msg, args, channel):
         """
           Go for a Llama ride
@@ -140,6 +159,20 @@ class Nixie(callbacks.Plugin):
         irc.reply("yeeeeeeeeeeehhhhhaaaa, yippee ki yay")
     llamaride  = wrap(llamaride, ['channel'] )
 
+    def questions(self, irc, msg, args, channel):
+        """
+          Displays the link where to post your questions.
+        """
+        irc.reply("Visit:  http://goo.gl/aQDVu0 to submit your questions.")
+    questions  = wrap(questions, ['channel'] )
+
+
+    def listquestions(self, irc, msg, args, channel):
+        """
+        This method will list the top 10 questions in the queue
+        """
+        irc.reply("This opperation is currently unsupported")
+    listquestions  = wrap(listquestions, ['channel'] )
 
 
     def nixiefeed(self, irc, msg, args):
