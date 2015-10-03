@@ -66,6 +66,18 @@ class Nixie(callbacks.Plugin):
     def _tinyurl(self, url):
         return t.create_one(url)
 
+    def admintest(self, irc, msg, args):
+        """
+          Checks to see if user is an Admin
+        """
+        if  not  ircdb.checkCapability(msg.prefix, 'admin'):
+            irc.reply("DENIED! Not an OP")
+            return
+        irc.reply("Hello Master")
+
+    admintest = wrap(admintest)
+
+
     def banner(self, irc, msg, args, text):
         """
           Returns the text passed in as a 'banner' to annoy everyone with.
@@ -82,51 +94,70 @@ class Nixie(callbacks.Plugin):
 
     banner = wrap(banner, ['text'])
 
+    def rules(self, irc, msg, args):
+        """
+          Returns rules of the channel
+        """
+
+        irc.reply("""These rules should really be self evident.  Don't be an ass, be courteous, don't make the ops take out the ban hammer.  We really don't want to be paying that close attention to the room.  If you make us police you you'll get a firm kick in the tush.  In other words...  read this: http://www.ubuntu.com/about/about-ubuntu/conduct it's a good guideline of what to do / not do""", private=False)
+
+    rules = wrap(rules)
+
 
     def nixiecontact(self, irc, msg, args):
         """
           Returns the nixiecontact information
         """
 
-        irc.reply("Contact Info Page: http://osalt.github.io/pages/contact.html", private=True)
+        irc.reply("Contact Info Page: http://www.osalt.tech/contact/nixie", private=True)
 
     nixiecontact = wrap(nixiecontact)
-
-
-    def nixiedocs(self, irc, msg, args):
-        """
-          Returns the set of collaborative documents created by the community.
-        """          
-        irc.reply("http://osalt.github.io/pages/community-planning.html", private=True)
-    nixiedocs = wrap(nixiedocs)
 
     def _sendMsg(self, irc, msg):
         irc.queueMsg(msg)
         irc.noReply()
 
-    #def spin(self, irc, msg, args, channel):
-    #    """
-    #      select a random user from current room
-    #    """
-    #    if  not  ircdb.checkCapability(msg.prefix, 'admin') and name.lower() =="nixie":
-    #        irc.reply("Permission Denied!")
-    #        return
-    #    chanObj = irc.state.channels[channel]
-    #    users = chanObj.users
-    #    array_users = []
-    #    for user in users:
-    #        if user in self.excludes:
-    #            continue
-    #        array_users.append(user)
-    #    #irc.reply("kicking:" + self.rnd.choice(array_users))
-    #    #sheep = self.rnd.choice(array_users)
-    #    sheep = 'csgeek'
-    #    irc.reply("trying to kick:" + sheep)
-    #    print (dir(irc))
-    #    ircmsgs.kick(channel, sheep)
-    #    self._sendMsg(irc, ircmsgs.kick(channel, sheep, "bye bye"))
-    #spin  = wrap(spin, ['channel'] )
+    def smackroom(self, irc, msg, args, channel):
+        """
+           bitch slap everyone in the room.
+        """
+        if  not  ircdb.checkCapability(msg.prefix, 'admin'):
+            irc.reply("Permission Denied!")
+            return
 
+        chanObj = irc.state.channels[channel]
+        users = chanObj.users
+        for user in users:
+            if user in self.excludes:
+                continue
+            irc.reply("slaps {user} with a big wet trout".format(user=user))
+    smackroom  = wrap(smackroom, ['channel'] )
+
+
+
+    def hugroom(self, irc, msg, args, channel):
+        """
+           hugs everyone in the room.
+        """
+        if  not  ircdb.checkCapability(msg.prefix, 'admin'):
+            irc.reply("Permission Denied!")
+            return
+
+        chanObj = irc.state.channels[channel]
+        users = chanObj.users
+        for user in users:
+            if user in self.excludes:
+                continue
+            irc.reply("huggles {user}".format(user=user))
+    hugroom  = wrap(hugroom, ['channel'] )
+
+    def nixietime(self, irc, msg, args, channel):
+        """
+          returns the definition of f(nixietime)
+        """
+        message = """ F(NixieTime) is defined as a function of F that represents the current time plus a nondeterministic random value denoting a temporal period.  The exact value of the delta is unknown and changes constantly based on fluctuation in the space time continuum and doctor who paradoxes  """
+        irc.reply(message)
+    nixietime  = wrap(nixietime, ['channel'] )
 
   
     def nixierandom(self, irc, msg, args, channel):
@@ -143,15 +174,6 @@ class Nixie(callbacks.Plugin):
         irc.reply(self.rnd.choice(array_users))
     nixierandom  = wrap(nixierandom, ['channel'] )
 
-
-    def ces(self, irc, msg, args, channel):
-        """
-          Form to submit questions / comments about CES coverage.
-        """
-        irc.reply("Submit CES related questions here: http://osalt.github.io/pages/forms.html")
-    ces = wrap(ces, ['channel'] )
-
-
     def llamaride(self, irc, msg, args, channel):
         """
           Go for a Llama ride
@@ -165,14 +187,6 @@ class Nixie(callbacks.Plugin):
         """
         irc.reply("Visit:  http://goo.gl/aQDVu0 to submit your questions.")
     questions  = wrap(questions, ['channel'] )
-
-
-    def listquestions(self, irc, msg, args, channel):
-        """
-        This method will list the top 10 questions in the queue
-        """
-        irc.reply("This opperation is currently unsupported")
-    listquestions  = wrap(listquestions, ['channel'] )
 
 
     def nixiefeed(self, irc, msg, args):
